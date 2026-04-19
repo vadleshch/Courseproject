@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Courseproject
 {
-    internal class State
+    public class State
     {
         public uint[] A  = new uint[5];
         public uint[] B  = new uint[11];
