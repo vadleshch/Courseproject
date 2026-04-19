@@ -1,9 +1,4 @@
-﻿using Microsoft.VisualBasic.ApplicationServices;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Courseproject
+﻿namespace Courseproject
 {
     internal class KCipher2
     {
@@ -235,7 +230,10 @@ namespace Courseproject
             }
             return S1;
         }
-
+        static (uint, uint) Keystream(State S) 
+        {
+            return (NLF(S.B[10], S.L2, S.L1, S.A[0]), NLF(S.B[0], S.R2, S.R1, S.A[4]));
+        }
         static uint NLF(uint a, uint b, uint c, uint d)
         {
             return (a + b) ^ c ^ d;
