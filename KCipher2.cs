@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.ApplicationServices;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,7 +7,7 @@ namespace Courseproject
 {
     internal class KCipher2
     {
-        uint[] Amul0 = { 
+        static uint[] Amul0 = { 
 0x00000000,0xB6086D1A,0xAF10DA34,0x1918B72E,0x9D207768,0x2B281A72,0x3230AD5C,
 0x8438C046,0xF940EED0,0x4F4883CA,0x565034E4,0xE05859FE,0x646099B8,0xD268F4A2,
 0xCB70438C,0x7D782E96,0x31801F63,0x87887279,0x9E90C557,0x2898A84D,0xACA0680B,
@@ -44,7 +45,7 @@ namespace Courseproject
 0x267CF99B,0x90749481,0xDC8CA574,0x6A84C86E,0x739C7F40,0xC594125A,0x41ACD21C, 
 0xF7A4BF06,0xEEBC0828,0x58B46532,0x25CC4BA4,0x93C426BE,0x8ADC9190,0x3CD4FC8A, 
 0xB8EC3CCC,0x0EE451D6,0x17FCE6F8,0xA1F48BE2};
-        uint[] Amul1 = {
+        static uint[] Amul1 = {
 0x00000000,0xA0F5FC2E,0x6DC7D55C,0xCD322972,0xDAA387B8,0x7A567B96,0xB76452E4,
 0x1791AECA,0x996B235D,0x399EDF73,0xF4ACF601,0x54590A2F,0x43C8A4E5,0xE33D58CB,
 0x2E0F71B9,0x8EFA8D97,0x1FD646BA,0xBF23BA94,0x721193E6,0xD2E46FC8,0xC575C102,
@@ -82,7 +83,7 @@ namespace Courseproject
 0x94FFA21B,0x340A5E35,0xA5269518,0x05D36936,0xC8E14044,0x6814BC6A,0x7F8512A0,
 0xDF70EE8E,0x1242C7FC,0xB2B73BD2,0x3C4DB645,0x9CB84A6B,0x518A6319,0xF17F9F37,
 0xE6EE31FD,0x461BCDD3,0x8B29E4A1,0x2BDC188F};
-        uint[] Amul2 = { 
+        static uint[] Amul2 = { 
 0x00000000,0x5BF87F93,0xB6BDFE6B,0xED4581F8,0x2137B1D6,0x7ACFCE45,0x978A4FBD,
 0xCC72302E,0x426E2FE1,0x19965072,0xF4D3D18A,0xAF2BAE19,0x63599E37,0x38A1E1A4,
 0xD5E4605C,0x8E1C1FCF,0x84DC5E8F,0xDF24211C,0x3261A0E4,0x6999DF77,0xA5EBEF59,
@@ -120,7 +121,7 @@ namespace Courseproject
 0x43B583A8,0x184DFC3B,0x128DBD7B,0x4975C2E8,0xA4304310,0xFFC83C83,0x33BA0CAD, 
 0x6842733E,0x8507F2C6,0xDEFF8D55,0x50E3929A,0x0B1BED09,0xE65E6CF1,0xBDA61362, 
 0x71D4234C,0x2A2C5CDF,0xC769DD27,0x9C91A2B4};
-    uint[] Amul3 = {
+        static uint[] Amul3 = {
 0x00000000,0x4559568B,0x8AB2AC73,0xCFEBFAF8,0x71013DE6,0x34586B6D,0xFBB39195,
 0xBEEAC71E,0xE2027AA9,0xA75B2C22,0x68B0D6DA,0x2DE98051,0x9303474F,0xD65A11C4,
 0x19B1EB3C,0x5CE8BDB7,0xA104F437,0xE45DA2BC,0x2BB65844,0x6EEF0ECF,0xD005C9D1,
@@ -201,8 +202,61 @@ namespace Courseproject
             S.L1 = 0;
             S.R2 = 0;
             S.L2 = 0;
+            for (int i = 0; i < 24; i++)
+            {
+                S = Next(S, true);
+            }
             return S;
         }
+        public static State Next(State S, bool init = false)
+        {
+            State S1 = new State();
+            S1.R1 = Sub(S.L2 + S.B[9]);
+            S1.L1 = Sub(S.R2 + S.B[4]);
+            S1.R2 = Sub(S.R1);
+            S1.L2 = Sub(S.L1);
+            for (int i = 0; i < 4; i++)
+            {
+                S1.A[i] = S.A[i + 1];
+            }
+            for (int i = 0; i < 10; i++)
+            {
+                S1.B[i] = S.B[i + 1];
+            }
+            if (init)
+            {
+                S1.A[4] = MulA0(S.A[0]) ^ S.A[3] ^ NLF(S.B[0], S.R2, S.R1, S.A[4]);
+                S1.B[10] = ((((S.A[2] >> 30) & 1) == 1) ? MulA1(S.B[0]) : MulA2(S.B[0])) ^ S.B[1] ^ S.B[6] ^ ((((S.A[2] >> 31) & 1) == 1) ? MulA3(S.B[8]) : S.B[8]) ^ NLF(S.B[10], S.L2, S.L1, S.A[0]);
+            }
+            else
+            {
+                S1.A[4] = MulA0(S.A[0]) ^ S.A[3];
+                S1.B[10] = ((((S.A[2] >> 30) & 1) == 1) ? MulA1(S.B[0]) : MulA2(S.B[0])) ^ S.B[1] ^ S.B[6] ^ ((((S.A[2] >> 31) & 1) == 1) ? MulA3(S.B[8]) : S.B[8]);
+            }
+            return S1;
+        }
+
+        static uint NLF(uint a, uint b, uint c, uint d)
+        {
+            return (a + b) ^ c ^ d;
+        }
+        static uint MulA0(uint w)
+        {
+            return ((w << 8) ^ Amul0[w >> 24]);
+        }
+        static uint MulA1(uint w)
+        {
+            return ((w << 8) ^ Amul1[w >> 24]);
+        }
+        static uint MulA2(uint w)
+        {
+            return ((w << 8) ^ Amul2[w >> 24]);
+        }
+        static uint MulA3(uint w)
+        {
+            return ((w << 8) ^ Amul3[w >> 24]);
+        }
+
         static uint Sub(uint w)
         {
             byte[] b = new byte[4];
