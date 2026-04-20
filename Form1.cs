@@ -1,5 +1,3 @@
-using System.Reflection.Emit;
-
 namespace Courseproject
 {
     public partial class Form1 : Form
@@ -155,7 +153,7 @@ namespace Courseproject
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                decFileNameLabel.Text =  openFileDialog1.FileName;
+                decFileNameLabel.Text = openFileDialog1.FileName;
                 decFileNameLabel.ForeColor = Color.Black;
                 nesDat[3] = true;
             }
@@ -195,6 +193,11 @@ namespace Courseproject
         }
 
         private void decResLable_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
 
         }
